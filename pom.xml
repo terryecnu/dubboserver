@@ -9,6 +9,13 @@
 
   <name>HC</name>
   <url>http://maven.apache.org</url>
+  
+    <!-- Spring Boot 启动父依赖 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.1.RELEASE</version>
+    </parent>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
