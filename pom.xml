@@ -33,4 +33,23 @@
   	<module>data-access</module>
     <module>dubbo-server</module>
   </modules>
+  
+  <build>
+   <pluginManagement>
+      <plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.1.1.RELEASE</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+      </plugins>
+   </pluginManagement>
+</build>
 </project>
