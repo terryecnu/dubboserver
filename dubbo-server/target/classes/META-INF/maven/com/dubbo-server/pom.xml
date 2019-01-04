@@ -21,7 +21,7 @@
   <dependencies>
     <dependency>
   			<groupId>ry</groupId>
-			<artifactId>healthCommunityDataAccess</artifactId>
+			<artifactId>data-access</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
   		</dependency>
 	
