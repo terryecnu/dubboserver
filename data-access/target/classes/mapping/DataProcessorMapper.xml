@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ry.basic.mapper.DataProcessorMapper" >
+  <resultMap id="BaseResultMap" type="ry.basic.model.DataProcessor" >
+    <id column="ID_PROJECT" property="idProject" jdbcType="VARCHAR" />
+    <id column="ID_CONTRACT" property="idContract" jdbcType="VARCHAR" />
+    <id column="CUR_TERM" property="curTerm" jdbcType="INTEGER" />
+    <id column="DT_OBSERVE" property="dtObserve" jdbcType="DATE" />
+    <id column="FLG_VALID" property="flgValid" jdbcType="CHAR" />
+    <result column="AMT_PRINCIPLE" property="amtPrinciple" jdbcType="DECIMAL" />
+    <result column="AMT_CUR_PRINCIPLE" property="amtCurPrinciple" jdbcType="DECIMAL" />
+    <result column="DAYS" property="days" jdbcType="INTEGER" />
+    <result column="FLG_TYPE" property="flgType" jdbcType="CHAR" />
+    <result column="CD_BATCH_ID" property="cdBatchId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID_PROJECT, ID_CONTRACT, CUR_TERM, DT_OBSERVE, FLG_VALID, AMT_PRINCIPLE, AMT_CUR_PRINCIPLE, 
+    DAYS, FLG_TYPE, CD_BATCH_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from data_processor
+    where ID_PROJECT = #{idProject,jdbcType=VARCHAR}
+      and ID_CONTRACT = #{idContract,jdbcType=VARCHAR}
+      and CUR_TERM = #{curTerm,jdbcType=INTEGER}
+      and DT_OBSERVE = #{dtObserve,jdbcType=DATE}
+      and FLG_VALID = #{flgValid,jdbcType=CHAR}
+  </select>
+  <select id="batchfetch" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from data_processor
+    LIMIT #{beg,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from data_processor
+    where ID_PROJECT = #{idProject,jdbcType=VARCHAR}
+      and ID_CONTRACT = #{idContract,jdbcType=VARCHAR}
+      and CUR_TERM = #{curTerm,jdbcType=INTEGER}
+      and DT_OBSERVE = #{dtObserve,jdbcType=DATE}
+      and FLG_VALID = #{flgValid,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="ry.basic.model.DataProcessor" >
+    insert into data_processor (ID_PROJECT, ID_CONTRACT, CUR_TERM, 
+      DT_OBSERVE, FLG_VALID, AMT_PRINCIPLE, 
+      AMT_CUR_PRINCIPLE, DAYS, FLG_TYPE, 
+      CD_BATCH_ID)
+    values (#{idProject,jdbcType=VARCHAR}, #{idContract,jdbcType=VARCHAR}, #{curTerm,jdbcType=INTEGER}, 
+      #{dtObserve,jdbcType=DATE}, #{flgValid,jdbcType=CHAR}, #{amtPrinciple,jdbcType=DECIMAL}, 
+      #{amtCurPrinciple,jdbcType=DECIMAL}, #{days,jdbcType=INTEGER}, #{flgType,jdbcType=CHAR}, 
+      #{cdBatchId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="ry.basic.model.DataProcessor" >
+    insert into data_processor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="idProject != null" >
+        ID_PROJECT,
+      </if>
+      <if test="idContract != null" >
+        ID_CONTRACT,
+      </if>
+      <if test="curTerm != null" >
+        CUR_TERM,
+      </if>
+      <if test="dtObserve != null" >
+        DT_OBSERVE,
+      </if>
+      <if test="flgValid != null" >
+        FLG_VALID,
+      </if>
+      <if test="amtPrinciple != null" >
+        AMT_PRINCIPLE,
+      </if>
+      <if test="amtCurPrinciple != null" >
+        AMT_CUR_PRINCIPLE,
+      </if>
+      <if test="days != null" >
+        DAYS,
+      </if>
+      <if test="flgType != null" >
+        FLG_TYPE,
+      </if>
+      <if test="cdBatchId != null" >
+        CD_BATCH_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="idProject != null" >
+        #{idProject,jdbcType=VARCHAR},
+      </if>
+      <if test="idContract != null" >
+        #{idContract,jdbcType=VARCHAR},
+      </if>
+      <if test="curTerm != null" >
+        #{curTerm,jdbcType=INTEGER},
+      </if>
+      <if test="dtObserve != null" >
+        #{dtObserve,jdbcType=DATE},
+      </if>
+      <if test="flgValid != null" >
+        #{flgValid,jdbcType=CHAR},
+      </if>
+      <if test="amtPrinciple != null" >
+        #{amtPrinciple,jdbcType=DECIMAL},
+      </if>
+      <if test="amtCurPrinciple != null" >
+        #{amtCurPrinciple,jdbcType=DECIMAL},
+      </if>
+      <if test="days != null" >
+        #{days,jdbcType=INTEGER},
+      </if>
+      <if test="flgType != null" >
+        #{flgType,jdbcType=CHAR},
+      </if>
+      <if test="cdBatchId != null" >
+        #{cdBatchId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ry.basic.model.DataProcessor" >
+    update data_processor
+    <set >
+      <if test="amtPrinciple != null" >
+        AMT_PRINCIPLE = #{amtPrinciple,jdbcType=DECIMAL},
+      </if>
+      <if test="amtCurPrinciple != null" >
+        AMT_CUR_PRINCIPLE = #{amtCurPrinciple,jdbcType=DECIMAL},
+      </if>
+      <if test="days != null" >
+        DAYS = #{days,jdbcType=INTEGER},
+      </if>
+      <if test="flgType != null" >
+        FLG_TYPE = #{flgType,jdbcType=CHAR},
+      </if>
+      <if test="cdBatchId != null" >
+        CD_BATCH_ID = #{cdBatchId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID_PROJECT = #{idProject,jdbcType=VARCHAR}
+      and ID_CONTRACT = #{idContract,jdbcType=VARCHAR}
+      and CUR_TERM = #{curTerm,jdbcType=INTEGER}
+      and DT_OBSERVE = #{dtObserve,jdbcType=DATE}
+      and FLG_VALID = #{flgValid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ry.basic.model.DataProcessor" >
+    update data_processor
+    set AMT_PRINCIPLE = #{amtPrinciple,jdbcType=DECIMAL},
+      AMT_CUR_PRINCIPLE = #{amtCurPrinciple,jdbcType=DECIMAL},
+      DAYS = #{days,jdbcType=INTEGER},
+      FLG_TYPE = #{flgType,jdbcType=CHAR},
+      CD_BATCH_ID = #{cdBatchId,jdbcType=BIGINT}
+    where ID_PROJECT = #{idProject,jdbcType=VARCHAR}
+      and ID_CONTRACT = #{idContract,jdbcType=VARCHAR}
+      and CUR_TERM = #{curTerm,jdbcType=INTEGER}
+      and DT_OBSERVE = #{dtObserve,jdbcType=DATE}
+      and FLG_VALID = #{flgValid,jdbcType=CHAR}
+  </update>
+  
+   <insert id="batchInsert" >
+    insert into data_processor (ID_PROJECT, ID_CONTRACT, CUR_TERM, 
+      AMT_PRINCIPLE, AMT_CUR_PRINCIPLE, DAYS, 
+      FLG_TYPE, DT_OBSERVE,FLG_VALID)
+     values
+	<foreach collection="list" item="item" index="index"
+			separator=",">
+     (#{item.idProject,jdbcType=VARCHAR}, 
+      #{item.idContract,jdbcType=VARCHAR}, 
+      #{item.curTerm,jdbcType=INTEGER}, 
+      #{item.amtPrinciple,jdbcType=DECIMAL}, 
+      #{item.amtCurPrinciple,jdbcType=DECIMAL}, 
+      #{item.days,jdbcType=INTEGER}, 
+      #{item.flgType,jdbcType=CHAR},
+      #{item.dtObserve,jdbcType=DATE}, 
+      #{item.flgValid,jdbcType=VARCHAR})
+     </foreach>
+  </insert>
+</mapper>

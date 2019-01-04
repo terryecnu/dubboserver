@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ry.basic.mapper.TbRecordsMapper" >
+  <resultMap id="BaseResultMap" type="ry.basic.model.TbRecords" >
+    <id column="records_id" property="recordsId" jdbcType="INTEGER" />
+    <result column="goods_code" property="goodsCode" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    records_id, goods_code, user_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_records
+    where records_id = #{recordsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_records
+    where records_id = #{recordsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="ry.basic.model.TbRecords" >
+    insert into tb_records (records_id, goods_code, user_id
+      )
+    values (#{recordsId,jdbcType=INTEGER}, #{goodsCode,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ry.basic.model.TbRecords" >
+    insert into tb_records
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordsId != null" >
+        records_id,
+      </if>
+      <if test="goodsCode != null" >
+        goods_code,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordsId != null" >
+        #{recordsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsCode != null" >
+        #{goodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ry.basic.model.TbRecords" >
+    update tb_records
+    <set >
+      <if test="goodsCode != null" >
+        goods_code = #{goodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where records_id = #{recordsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ry.basic.model.TbRecords" >
+    update tb_records
+    set goods_code = #{goodsCode,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR}
+    where records_id = #{recordsId,jdbcType=INTEGER}
+  </update>
+</mapper>

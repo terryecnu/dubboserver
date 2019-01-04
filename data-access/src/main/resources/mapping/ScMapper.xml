@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ry.basic.mapper.ScMapper" >
+  <resultMap id="BaseResultMap" type="ry.basic.model.Sc" >
+    <id column="Sid" property="sid" jdbcType="VARCHAR" />
+    <id column="Cid" property="cid" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="DECIMAL" />
+    <result column="updatetme" property="updatetme" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Sid, Cid, score, updatetme
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from sc
+    where Sid = #{sid,jdbcType=VARCHAR}
+      and Cid = #{cid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectList" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from sc
+    where Sid = #{sid,jdbcType=VARCHAR}
+      and updatetme = #{time,jdbcType=DATE}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from sc
+    where Sid = #{sid,jdbcType=VARCHAR}
+      and Cid = #{cid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="ry.basic.model.Sc" >
+    insert into sc (Sid, Cid, score, 
+      updatetme)
+    values (#{sid,jdbcType=VARCHAR}, #{cid,jdbcType=VARCHAR}, #{score,jdbcType=DECIMAL}, 
+      #{updatetme,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="ry.basic.model.Sc" >
+    insert into sc
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        Sid,
+      </if>
+      <if test="cid != null" >
+        Cid,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="updatetme != null" >
+        updatetme,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        #{sid,jdbcType=VARCHAR},
+      </if>
+      <if test="cid != null" >
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=DECIMAL},
+      </if>
+      <if test="updatetme != null" >
+        #{updatetme,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ry.basic.model.Sc" >
+    update sc
+    <set >
+      <if test="score != null" >
+        score = #{score,jdbcType=DECIMAL},
+      </if>
+      <if test="updatetme != null" >
+        updatetme = #{updatetme,jdbcType=DATE},
+      </if>
+    </set>
+    where Sid = #{sid,jdbcType=VARCHAR}
+      and Cid = #{cid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ry.basic.model.Sc" >
+    update sc
+    set score = #{score,jdbcType=DECIMAL},
+      updatetme = #{updatetme,jdbcType=DATE}
+    where Sid = #{sid,jdbcType=VARCHAR}
+      and Cid = #{cid,jdbcType=VARCHAR}
+  </update>
+</mapper>

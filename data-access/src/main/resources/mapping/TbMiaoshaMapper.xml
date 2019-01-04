@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ry.basic.mapper.TbMiaoshaMapper" >
+  <resultMap id="BaseResultMap" type="ry.basic.model.TbMiaosha" >
+    <id column="goods_code" property="goodsCode" jdbcType="VARCHAR" />
+    <result column="goods_num" property="goodsNum" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    goods_code, goods_num
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_miaosha
+    where goods_code = #{goodsCode,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tb_miaosha
+    where goods_code = #{goodsCode,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="ry.basic.model.TbMiaosha" >
+    insert into tb_miaosha (goods_code, goods_num)
+    values (#{goodsCode,jdbcType=VARCHAR}, #{goodsNum,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ry.basic.model.TbMiaosha" >
+    insert into tb_miaosha
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="goodsCode != null" >
+        goods_code,
+      </if>
+      <if test="goodsNum != null" >
+        goods_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="goodsCode != null" >
+        #{goodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsNum != null" >
+        #{goodsNum,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ry.basic.model.TbMiaosha" >
+    update tb_miaosha
+    <set >
+      <if test="goodsNum != null" >
+        goods_num = #{goodsNum,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where goods_code = #{goodsCode,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ry.basic.model.TbMiaosha" >
+    update tb_miaosha
+    set goods_num = #{goodsNum,jdbcType=VARCHAR}
+    where goods_code = #{goodsCode,jdbcType=VARCHAR}
+  </update>
+  <update id="updateGoodNums" parameterType="String" >
+    update tb_miaosha
+    set goods_num = goods_num - 1
+    where goods_code = #{goodsCode,jdbcType=VARCHAR}
+    and goods_num -1 > 0
+  </update>
+</mapper>

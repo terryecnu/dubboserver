@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ry.basic.mapper.CourseMapper" >
+  <resultMap id="BaseResultMap" type="ry.basic.model.Course" >
+    <id column="Cid" property="cid" jdbcType="VARCHAR" />
+    <result column="Cname" property="cname" jdbcType="VARCHAR" />
+    <result column="Tid" property="tid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Cid, Cname, Tid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where Cid = #{cid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from course
+  </select>
+  
+<select id="queryList" resultMap="BaseResultMap" parameterType="map">
+		select
+		 <include refid="Base_Column_List" />
+        from course
+		where
+		Tid in
+		<foreach collection="items" item="item" index="index"
+			open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from course
+    where Cid = #{cid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="ry.basic.model.Course" >
+    insert into course (Cid, Cname, Tid
+      )
+    values (#{cid,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{tid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ry.basic.model.Course" >
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        Cid,
+      </if>
+      <if test="cname != null" >
+        Cname,
+      </if>
+      <if test="tid != null" >
+        Tid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null" >
+        #{tid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ry.basic.model.Course" >
+    update course
+    <set >
+      <if test="cname != null" >
+        Cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null" >
+        Tid = #{tid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where Cid = #{cid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ry.basic.model.Course" >
+    update course
+    set Cname = #{cname,jdbcType=VARCHAR},
+      Tid = #{tid,jdbcType=VARCHAR}
+    where Cid = #{cid,jdbcType=VARCHAR}
+  </update>
+</mapper>
