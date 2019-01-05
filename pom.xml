@@ -32,6 +32,7 @@
   <modules>
   	<module>data-access</module>
     <module>dubbo-server</module>
+    <module>dubbo-client</module>
   </modules>
   
   <build>
