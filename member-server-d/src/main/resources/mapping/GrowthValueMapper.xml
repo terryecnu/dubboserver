@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.GrowthValueMapper">
+    <resultMap id="BaseResultMap" type="com.bestpay.member.po.GrowthValue">
+        <id column="id" property="acctId" jdbcType="INTEGER"/>
+        <result column="acct_status" property="acctStatus" jdbcType="INTEGER"/>
+        <result column="user_type" property="userType" jdbcType="INTEGER"/>
+        <result column="user_no" property="userNo" jdbcType="VARCHAR"/>
+        <result column="acct_amount" property="acctAmount" jdbcType="DOUBLE"/>
+        <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, acct_status, user_type, user_no, acct_amount, created_by, created_at, updated_by,
+    updated_at
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_insurance_crm_growth_value
+        where id = #{acctId,jdbcType=INTEGER}
+    </select>
+    <!--查询我的成长值的基本信息-->
+    <select id="queryMyGrowthValue" resultType="com.bestpay.member.dto.GrowValueDto"
+            parameterType="com.bestpay.member.vo.QueryGrowthDetailVo">
+   SELECT
+        r.id rankId,
+        t.growth_value growthValue,
+	r.rank_name currentQualName,
+	r.growth_value_max  maxGrowValue,
+	r.growth_value_min  minGrowValue,
+	p.rank_prop_name quanlFlag,
+	p.rank_prop_img quanlImg
+
+FROM
+	t_insurance_crm_customer t,
+	t_insurance_crm_member_rank r,
+        t_insurance_crm_member_rank_prop p
+WHERE t.id_rank=r.id
+and r.rank_prop_id = p.id
+and t.user_no=#{userNo}
+ and r.member_rank_status =  5
+ and r.is_valid = 1
+/*查询下级会员等级信息*/
+  </select>
+    <select id="queryNextRankInfo" parameterType="java.lang.Integer" resultType="com.bestpay.member.dto.GrowValueDto">
+    SELECT
+	t.id rankId,
+	t.rank_name currentQualName,
+	t.growth_value_min minGrowValue,
+	t.growth_value_max maxGrowValue,
+	p.rank_prop_name quanlFlag,
+	p.rank_prop_img quanlImg
+FROM
+	t_insurance_crm_member_rank t,t_insurance_crm_member_rank_prop p
+WHERE
+	t.growth_value_min >  #{currentRankMaxValue}
+        and t.member_rank_status = 5
+        and t.is_valid = 1
+	  and t.rank_prop_id = p.id
+ORDER BY
+	t.growth_value_min
+	limit 1
+  </select>
+    <!--获取时间戳-->
+    <select id="getTimeStamp" resultType="java.lang.String">
+ select concat(DATE_FORMAT(now(),'%Y%m%d%H%i%s'),LPAD(ROUND(ROUND(RAND(),4)*1000),4,'0'))
+</select>
+    <!--根据taskId查询成长值-->
+    <select id="queryGrowthValueById" resultType="java.lang.Double">
+      select t.value from t_insurance_crm_task_parameter t where t.task_id=#{taskId}
+    </select>
+    <!--更新用戶成長值-->
+    <update id="updateGrowthValue" >
+UPDATE t_insurance_crm_customer t
+SET t.growth_value = t.growth_value + #{growthValue},
+ t.updated_at=now()
+WHERE
+	t.user_no = #{userNo}
+    </update>
+    <!--更新账户表成长值与用户表成长值一致-->
+    <update id="updateAcctGrowthValue" parameterType="java.lang.String">
+     UPDATE t_insurance_crm_growth_value t
+SET t.acct_amount =  (
+	SELECT
+		m.growth_value from t_insurance_crm_customer m
+	WHERE
+		m.user_no = #{userNo}),
+t.created_by=#{userNo},
+t.updated_by=#{userNo},
+t.updated_at=now()
+WHERE
+	t.user_no = #{userNo}
+      </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_insurance_crm_growth_value
+    where acct_id = #{acctId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.bestpay.member.po.GrowthValue">
+    insert into t_insurance_crm_growth_value (acct_id, acct_status, user_type, 
+      user_no, acct_amount, created_by, 
+      created_at, updated_by, updated_at
+      )
+    values (#{acctId,jdbcType=INTEGER}, #{acctStatus,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
+      #{userNo,jdbcType=VARCHAR}, #{acctAmount,jdbcType=DOUBLE}, #{createdBy,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, #{updatedAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.bestpay.member.po.GrowthValue">
+        insert into t_insurance_crm_growth_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="acctId != null">
+                id,
+            </if>
+            <if test="acctStatus != null">
+                acct_status,
+            </if>
+            <if test="userType != null">
+                user_type,
+            </if>
+            <if test="userNo != null">
+                user_no,
+            </if>
+            <if test="acctAmount != null">
+                acct_amount,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="acctId != null">
+                #{acctId,jdbcType=INTEGER},
+            </if>
+            <if test="acctStatus != null">
+                #{acctStatus,jdbcType=INTEGER},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="userNo != null">
+                #{userNo,jdbcType=VARCHAR},
+            </if>
+            <if test="acctAmount != null">
+                #{acctAmount,jdbcType=DOUBLE},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.GrowthValue">
+        update t_insurance_crm_growth_value
+        <set>
+            <if test="acctStatus != null">
+                acct_status = #{acctStatus,jdbcType=INTEGER},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="userNo != null">
+                user_no = #{userNo,jdbcType=VARCHAR},
+            </if>
+            <if test="acctAmount != null">
+                acct_amount = #{acctAmount,jdbcType=DOUBLE},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where acct_id = #{acctId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.GrowthValue">
+    update t_insurance_crm_growth_value
+    set acct_status = #{acctStatus,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      user_no = #{userNo,jdbcType=VARCHAR},
+      acct_amount = #{acctAmount,jdbcType=DOUBLE},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where acct_id = #{acctId,jdbcType=INTEGER}
+  </update>
+</mapper>

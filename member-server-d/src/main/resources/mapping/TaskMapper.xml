@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.TaskMapper">
+    <resultMap id="BaseResultMap" type="com.bestpay.member.po.Task">
+        <id column="id" property="insuranceCrmTaskId" jdbcType="INTEGER"/>
+        <result column="act_type" property="actType" jdbcType="INTEGER"/>
+        <result column="task_type" property="taskType" jdbcType="INTEGER"/>
+        <result column="task_title" property="taskTitle" jdbcType="VARCHAR"/>
+        <result column="reward_desc" property="rewardDesc" jdbcType="VARCHAR"/>
+        <result column="img_url" property="imgUrl" jdbcType="VARCHAR"/>
+        <result column="link" property="link" jdbcType="VARCHAR"/>
+        <result column="disposable" property="disposable" jdbcType="INTEGER"/>
+        <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="auditor_id" property="auditorId" jdbcType="VARCHAR"/>
+        <result column="aud_status" property="audStatus" jdbcType="SMALLINT"/>
+        <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP"/>
+        <result column="insurance_crm_task_status" property="insuranceCrmTaskStatus" jdbcType="INTEGER"/>
+        <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+        <result column="auditor_refused" property="auditorRefused" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, act_type, task_type, task_title, reward_desc, img_url, link,
+    disposable, created_by, created_at, updated_by, updated_at, auditor_id, aud_status, 
+    audit_time, insurance_crm_task_status, sort_order, auditor_refused
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_insurance_crm_task
+        where id = #{insuranceCrmTaskId,jdbcType=INTEGER}
+    </select>
+
+     <select id="queryPolicyCnt"  parameterType="java.util.Map" resultType="java.lang.Integer">
+         select count(1) from t_insurance_crm_policy_cum_amount_trans t where t.user_id=#{userNo}
+        <if test="insuranceType!=null">
+         	and user_type = #{insuranceType}
+         </if>
+         
+    </select>
+    <select id="queryPolicyCnt2"  parameterType="java.lang.String" resultType="java.lang.Integer">
+        select insurance_number from t_insurance_crm_customer t where t.user_No=#{userNo}
+    </select>
+       <select id="queryPolicySum"  parameterType="java.lang.String" resultType="java.lang.Double">
+        select acct_amount from t_insurance_crm_customer t where t.user_No=#{userNo}
+    </select>
+           <select id="queryGrowthValue"  parameterType="java.lang.String" resultType="java.lang.Double">
+        select growth_value from t_insurance_crm_customer t where t.user_No=#{userNo}
+    </select>
+           <select id="queryUserRate"  parameterType="java.lang.String" resultType="java.lang.Double">
+        select growth_rate from t_insurance_crm_customer t where t.user_No=#{userNo}
+    </select>
+    
+    <!--
+    <select id="queryForActType" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+     select
+        <include refid="Base_Column_List"/>
+        from t_insurance_crm_task
+        where act_type = #{actType,jdbcType=INTEGER}
+        and is_invalid = 1 and aud_status = 5
+    </select>-->
+        <select id="queryForActType" resultType="com.bestpay.member.dto.TaskParameterDto" parameterType="java.util.Map">
+     select
+        t.id id,
+		t.task_id taskId,
+		t.day_number  dayNumber,
+		t.month_number	monthNumber,
+		t.value,
+		t.task_act_type	taskActType,
+		t.purchase_policy_type purchasePolicyType,
+		t.insurance_type insuranceType,
+		t.premium,
+		t.insurance_number insuranceNumber,
+		t.share_type	shareType,
+		t.activity_type activityType,
+		t.max_number maxNumber,
+		t.created_by createdBy,
+		t.created_at createdAt,
+		t.updated_by updatedBy,
+		t.updated_at updatedAt,
+		t.is_invalid isInvalid
+        from t_insurance_crm_task_parameter t,t_insurance_crm_task ta
+        
+        
+        where t.task_act_type = #{taskType}
+    	
+    	<if test="taskType==4">
+        	and t.activity_type = #{activityType}
+    	</if>
+        and t.is_invalid = 1
+        and t.task_id = ta.id 
+        and ta.is_invalid =1
+        and ta.insurance_crm_task_status = 5
+    </select>
+    <!--查询客戶已经完成任务数量-->
+    <select id="queryCompletedTaskCount" resultType="java.lang.Integer"
+            parameterType="com.bestpay.member.vo.QueryGrowthDetailVo">
+      select count(DISTINCT t.id) from  t_insurance_crm_customer_task  t where t.created_by=#{userNo}
+  </select>
+    <!--查询所有任务数量-->
+    <select id="queryAllTaskCount" resultType="java.lang.Integer">
+         SELECT  count(1) from t_insurance_crm_task t where t.is_invalid=1 and t.insurance_crm_task_status = 5
+    </select>
+    <!--查询所有类型的任务-->
+    <select id="queryBuyInsuranceTask" resultType="com.bestpay.member.dto.TaskDetailDto">
+      SELECT
+	t.id taskId,
+	t.act_type actType,
+	t.task_type taskType,
+	t.link taskLink,
+	t.img_url imgUrl,
+	t.reward_desc rewardDesc,
+	t.task_title taskTitle,
+	m.day_number	dayNum,
+	m.month_number  monthNum,
+	m.max_number		maxNum
+FROM
+	t_insurance_crm_task t,
+	t_insurance_crm_task_parameter m
+WHERE
+	t.id=m.task_id
+and
+	t.is_invalid = 1
+    and t.insurance_crm_task_status = 5
+ORDER BY
+	t.sort_order
+    </select>
+    <!--查询当天该任务的数量-->
+    <select id="queryDaliCount" resultType="java.lang.Integer"
+            parameterType="com.bestpay.member.vo.QueryCompleteTaskCountVo">
+    SELECT
+	count(1)
+FROM
+	t_insurance_crm_customer_task t
+WHERE
+	 TO_DAYS(t.created_at) = TO_DAYS(now())
+AND t.created_by = #{userNo}
+and t.task_id =#{taskId}
+</select>
+    <!--查询当月该任务的数量-->
+    <select id="queryMonthlyCount" parameterType="com.bestpay.member.vo.QueryCompleteTaskCountVo"
+            resultType="java.lang.Integer">
+ SELECT
+ 	count(1)
+ FROM
+ 	t_insurance_crm_customer_task t
+ WHERE
+ 	DATE_FORMAT(t.created_at, '%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m')
+ and
+  	t.created_by = #{userNo}
+	and t.task_id=#{taskId}
+</select>
+    <!--查询所有数量-->
+    <select id="queryAllCount" parameterType="com.bestpay.member.vo.QueryCompleteTaskCountVo"
+            resultType="java.lang.Integer">
+SELECT
+	count(1)
+FROM
+	t_insurance_crm_customer_task t
+WHERE
+	t.task_id = #{taskId}
+AND t.created_by = #{userNo}
+    </select>
+    <!--查询会员中心任务列表 两条-->
+    <select id="selectMemberCenterTaskDtosByUserNo" resultType="com.bestpay.member.dto.TaskDto">
+        (SELECT
+                tt.id AS taskId,
+                tt.act_type AS actType,
+                tt.task_type AS taskType,
+                tt.link AS taskLink,
+                tt.img_url AS imgUrl,
+                tt.reward_desc AS rewardDesc,
+                tt.task_title AS taskTitle,
+                ttp.day_number AS dayCount,
+                ttp.month_number AS monthCount,
+                ttp.max_number AS totalCount
+            FROM
+                t_insurance_crm_task tt,t_insurance_crm_task_parameter ttp
+            WHERE
+                tt.id = ttp.task_id
+        AND tt. insurance_crm_task_status = 5
+            AND tt.is_invalid = 1
+            AND ttp.is_invalid = 1
+            AND tt.task_type = 2
+        and tt.act_type = 2
+            order by tt.sort_order DESC,tt.created_at desc,tt.id desc
+            limit 1
+            )
+            union ALL
+            (SELECT
+                tt.id AS taskId,
+                tt.act_type AS actType,
+                tt.task_type AS taskType,
+                tt.link AS taskLink,
+                tt.img_url AS imgUrl,
+                tt.reward_desc AS rewardDesc,
+                tt.task_title AS taskTitle,
+                ttp.day_number AS dayCount,
+                ttp.month_number AS monthCount,
+                ttp.max_number AS totalCount
+            FROM
+                t_insurance_crm_task tt,t_insurance_crm_task_parameter ttp
+            WHERE
+                tt.id = ttp.task_id
+        AND tt. insurance_crm_task_status = 5
+            AND tt.is_invalid = 1
+            AND ttp.is_invalid = 1
+            AND tt.task_type = 2
+        and tt.act_type = 3
+            order by tt.sort_order DESC,tt.created_at desc,tt.id desc
+            limit 1
+            )
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_insurance_crm_task
+    where id = #{insuranceCrmTaskId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.bestpay.member.po.Task">
+    insert into t_insurance_crm_task (id, act_type, task_type, 
+      task_title, reward_desc, img_url, 
+      link, disposable, created_by, 
+      created_at, updated_by, updated_at, 
+      auditor_id, aud_status, audit_time, 
+      insurance_crm_task_status, sort_order, auditor_refused
+      )
+    values (#{insuranceCrmTaskId,jdbcType=INTEGER}, #{actType,jdbcType=INTEGER}, #{taskType,jdbcType=INTEGER}, 
+      #{taskTitle,jdbcType=VARCHAR}, #{rewardDesc,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR}, 
+      #{link,jdbcType=VARCHAR}, #{disposable,jdbcType=INTEGER}, #{createdBy,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, #{updatedAt,jdbcType=TIMESTAMP}, 
+      #{auditorId,jdbcType=VARCHAR}, #{audStatus,jdbcType=SMALLINT}, #{auditTime,jdbcType=TIMESTAMP}, 
+      #{insuranceCrmTaskStatus,jdbcType=INTEGER}, #{sortOrder,jdbcType=INTEGER}, #{auditorRefused,jdbcType=VARCHAR}
+      )
+  </insert>
+    <!--插入所做任务信息-->
+    <insert id="toCompleteTask" parameterType="com.bestpay.member.vo.ToCompleteTaskVo">
+        INSERT INTO t_insurance_crm_customer_task (
+        task_id,
+        act_type,
+        task_type,
+        task_title,
+        reward_desc,
+        img_url,
+        link,
+        created_by,
+        created_at,
+        complete_date
+        )
+        SELECT
+        m.id,
+        m.act_type,
+        m.task_type,
+        m.task_title,
+        m.reward_desc,
+        m.img_url,
+        m.link,
+        #{userNo},
+        now(),
+        now()
+        FROM
+        t_insurance_crm_task m
+        WHERE
+        m.id = #{taskId}
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.Task">
+        update t_insurance_crm_task
+        <set>
+            <if test="actType != null">
+                act_type = #{actType,jdbcType=INTEGER},
+            </if>
+            <if test="taskType != null">
+                task_type = #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="taskTitle != null">
+                task_title = #{taskTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="rewardDesc != null">
+                reward_desc = #{rewardDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="imgUrl != null">
+                img_url = #{imgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="link != null">
+                link = #{link,jdbcType=VARCHAR},
+            </if>
+            <if test="disposable != null">
+                disposable = #{disposable,jdbcType=INTEGER},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="auditorId != null">
+                auditor_id = #{auditorId,jdbcType=VARCHAR},
+            </if>
+            <if test="audStatus != null">
+                aud_status = #{audStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="auditTime != null">
+                audit_time = #{auditTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="insuranceCrmTaskStatus != null">
+                insurance_crm_task_status = #{insuranceCrmTaskStatus,jdbcType=INTEGER},
+            </if>
+            <if test="sortOrder != null">
+                sort_order = #{sortOrder,jdbcType=INTEGER},
+            </if>
+            <if test="auditorRefused != null">
+                auditor_refused = #{auditorRefused,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{insuranceCrmTaskId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.Task">
+    update t_insurance_crm_task
+    set act_type = #{actType,jdbcType=INTEGER},
+      task_type = #{taskType,jdbcType=INTEGER},
+      task_title = #{taskTitle,jdbcType=VARCHAR},
+      reward_desc = #{rewardDesc,jdbcType=VARCHAR},
+      img_url = #{imgUrl,jdbcType=VARCHAR},
+      link = #{link,jdbcType=VARCHAR},
+      disposable = #{disposable,jdbcType=INTEGER},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      auditor_id = #{auditorId,jdbcType=VARCHAR},
+      aud_status = #{audStatus,jdbcType=SMALLINT},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      insurance_crm_task_status = #{insuranceCrmTaskStatus,jdbcType=INTEGER},
+      sort_order = #{sortOrder,jdbcType=INTEGER},
+      auditor_refused = #{auditorRefused,jdbcType=VARCHAR}
+    where id = #{insuranceCrmTaskId,jdbcType=INTEGER}
+  </update>
+</mapper>

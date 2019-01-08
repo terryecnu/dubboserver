@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.MemberRankContentMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.MemberRankContent" >
+    <id column="id" property="contentId" jdbcType="INTEGER" />
+    <result column="busi_code" property="busiCode" jdbcType="INTEGER" />
+    <result column="busi_id" property="busiId" jdbcType="INTEGER" />
+    <result column="member_rank_id" property="memberRankId" jdbcType="INTEGER" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, busi_code, busi_id, member_rank_id, created_by, created_at, updated_by,
+    updated_at,is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_insurance_crm_member_rank_content
+    where id = #{contentId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_insurance_crm_member_rank_content
+    where is_valid = 1
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_insurance_crm_member_rank_content
+    where id = #{contentId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bestpay.member.po.MemberRankContent" >
+    insert into t_insurance_crm_member_rank_content (id, busi_code, busi_id,
+      member_rank_id, created_by, created_at, 
+      updated_by, updated_at)
+    values (#{contentId,jdbcType=INTEGER}, #{busiCode,jdbcType=INTEGER}, #{busiId,jdbcType=INTEGER}, 
+      #{memberRankId,jdbcType=INTEGER}, #{createdBy,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, 
+      #{updatedBy,jdbcType=VARCHAR}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bestpay.member.po.MemberRankContent" >
+    insert into t_insurance_crm_member_rank_content
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="contentId != null" >
+        id,
+      </if>
+      <if test="busiCode != null" >
+        busi_code,
+      </if>
+      <if test="busiId != null" >
+        busi_id,
+      </if>
+      <if test="memberRankId != null" >
+        member_rank_id,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedBy != null" >
+        updated_by,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="contentId != null" >
+        #{contentId,jdbcType=INTEGER},
+      </if>
+      <if test="busiCode != null" >
+        #{busiCode,jdbcType=INTEGER},
+      </if>
+      <if test="busiId != null" >
+        #{busiId,jdbcType=INTEGER},
+      </if>
+      <if test="memberRankId != null" >
+        #{memberRankId,jdbcType=INTEGER},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.MemberRankContent" >
+    update t_insurance_crm_member_rank_content
+    <set >
+      <if test="busiCode != null" >
+        busi_code = #{busiCode,jdbcType=INTEGER},
+      </if>
+      <if test="busiId != null" >
+        busi_id = #{busiId,jdbcType=INTEGER},
+      </if>
+      <if test="memberRankId != null" >
+        member_rank_id = #{memberRankId,jdbcType=INTEGER},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        updated_by = #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{contentId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.MemberRankContent" >
+    update t_insurance_crm_member_rank_content
+    set busi_code = #{busiCode,jdbcType=INTEGER},
+      busi_id = #{busiId,jdbcType=INTEGER},
+      member_rank_id = #{memberRankId,jdbcType=INTEGER},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{contentId,jdbcType=INTEGER}
+  </update>
+</mapper>

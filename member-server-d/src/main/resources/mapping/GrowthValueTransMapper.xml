@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.GrowthValueTransMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.GrowthValueTrans" >
+    <id column="id" property="acctTransId" jdbcType="INTEGER" />
+    <result column="acct_trans_no" property="acctTransNo" jdbcType="VARCHAR" />
+    <result column="user_no" property="userNo" jdbcType="VARCHAR" />
+    <result column="trans_type" property="transType" jdbcType="INTEGER" />
+    <result column="trans_status" property="transStatus" jdbcType="VARCHAR" />
+    <result column="trans_time" property="transTime" jdbcType="TIMESTAMP" />
+    <result column="trans_amount" property="transAmount" jdbcType="DOUBLE" />
+    <result column="bp_code" property="bpCode" jdbcType="INTEGER" />
+    <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
+    <result column="this_acct_amount" property="thisAcctAmount" jdbcType="DOUBLE" />
+    <result column="trans_context" property="transContext" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, acct_trans_no, user_no, trans_type, trans_status, trans_time, trans_amount,
+    bp_code, busi_id, this_acct_amount, trans_context, created_by, created_at, updated_by, 
+    updated_at
+  </sql>
+  <!--查询成长值明细列表-->
+<select id="queryGrowthDetailList" parameterType="com.bestpay.member.vo.QueryGrowthDetailVo" resultType="com.bestpay.member.dto.GrowthDetail">
+SELECT
+	*
+FROM
+	(
+		SELECT
+			MONTH (t.trans_time) monthNum,
+			YEAR (t.trans_time) yearNum,
+			sum(t.trans_amount) sumAmount,
+			'' transTime,
+			NULL transAmount,
+			1 type,
+			''   taskTitle
+		FROM
+			t_insurance_crm_growth_value_trans t,
+			t_insurance_crm_customer_task s
+		WHERE
+		t.busi_id = s.id
+		and t.bp_code = 2
+		AND t.user_no = #{userNo}
+		GROUP BY
+			YEAR (t.trans_time),
+			MONTH (t.trans_time)
+		UNION ALL
+			SELECT
+				tt.monthnum monthNum,
+				tt.yearNum yearNum ,
+				NULL sumAmount,
+				DATE_FORMAT(t.trans_time,'%Y-%m-%d') transTime,
+				t.trans_amount transAmount,
+				0 type,
+        s.task_title  taskTitle
+			FROM
+				t_insurance_crm_growth_value_trans t,
+				t_insurance_crm_customer_task s,
+				(
+					SELECT
+						MONTH (t.trans_time) monthnum,
+						YEAR (t.trans_time) yearNum,
+						sum(t.trans_amount) sum_amount
+
+					FROM
+						t_insurance_crm_growth_value_trans t,
+						t_insurance_crm_customer_task s
+					WHERE
+	t.busi_id = s.id
+					and t.bp_code = 2
+					AND t.user_no = #{userNo}
+					GROUP BY
+						YEAR (t.trans_time),
+						MONTH (t.trans_time)
+				) tt
+			WHERE
+	t.busi_id = s.task_id
+			and t.bp_code = 2
+			AND t.user_no = #{userNo}
+			AND YEAR (t.trans_time) = tt.yearNum
+			AND MONTH (t.trans_time) = tt.monthnum
+	) tt
+ORDER BY
+	tt.yearNum DESC,
+	tt.monthnum DESC,
+	tt.type DESC
+LIMIT #{startOffset},
+ #{endOffset}
+</select>
+	<!--插入交易记录信息表-->
+	<insert id="insertGrowthRecord" parameterType="com.bestpay.member.vo.GrowthTransVo">
+INSERT INTO t_insurance_crm_growth_value_trans
+<trim prefix="(" suffix=")" suffixOverrides=",">
+	acct_trans_no,
+	user_no,
+	trans_type,
+	trans_time,
+	trans_amount,
+	bp_code,
+	busi_id,
+	this_acct_amount,
+	trans_context,
+	created_by,
+	created_at
+</trim>
+VALUES
+	<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{acctTransNo},
+		#{userNo},
+		#{transType},
+		now(),
+		 #{transGrowthValue},
+		#{bpCode},
+		#{busiId},
+		#{thisAcctAmount},
+		#{transContext},
+		#{userNo},
+		now()
+	</trim>
+	</insert>
+</mapper>

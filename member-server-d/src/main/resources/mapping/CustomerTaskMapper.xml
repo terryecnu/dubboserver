@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.CustomerTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.CustomerTask" >
+    <id column="id" property="customerTaskId" jdbcType="INTEGER" />
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="act_type" property="actType" jdbcType="INTEGER" />
+    <result column="task_type" property="taskType" jdbcType="INTEGER" />
+    <result column="task_title" property="taskTitle" jdbcType="VARCHAR" />
+    <result column="reward_desc" property="rewardDesc" jdbcType="VARCHAR" />
+    <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+    <result column="link" property="link" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="busi_code" property="busiCode" jdbcType="INTEGER" />
+    <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
+    <result column="complete_date" property="completeDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, task_id, act_type, task_type, task_title, reward_desc, img_url,
+    link, created_by, created_at, updated_by, updated_at, status, busi_code, busi_id, 
+    complete_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_insurance_crm_customer_task
+    where id = #{customerTaskId,jdbcType=INTEGER}
+  </select>
+
+
+
+  <select id="selectShareOrSignUpTaskCountByType" resultType="java.lang.Integer">
+    select count(1)
+    from t_insurance_crm_customer_task
+    where task_id = #{taskId}
+    AND created_by = #{userNo}
+    AND status = 1
+    <if test="type == 0" >
+      AND 1 = 1
+    </if>
+    <if test="type == 2" >
+      AND to_days(complete_date) = to_days(now())
+    </if>
+    <if test="type == 1" >
+      AND DATE_FORMAT( complete_date, '%Y%m' )=DATE_FORMAT(CURDATE() ,'%Y%m')
+    </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_insurance_crm_customer_task
+    where id = #{customerTaskId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bestpay.member.po.CustomerTask" >
+    insert into t_insurance_crm_customer_task (id, task_id, act_type,
+      task_type, task_title, reward_desc, 
+      img_url, link, created_by, 
+      created_at, updated_by, updated_at, 
+      status, busi_code, busi_id, 
+      complete_date)
+    values (#{customerTaskId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{actType,jdbcType=INTEGER}, 
+      #{taskType,jdbcType=INTEGER}, #{taskTitle,jdbcType=VARCHAR}, #{rewardDesc,jdbcType=VARCHAR}, 
+      #{imgUrl,jdbcType=VARCHAR}, #{link,jdbcType=VARCHAR}, #{createdBy,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, #{updatedAt,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{busiCode,jdbcType=INTEGER}, #{busiId,jdbcType=VARCHAR}, 
+      #{completeDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bestpay.member.po.CustomerTask" >
+    insert into t_insurance_crm_customer_task
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="customerTaskId != null" >
+        id,
+      </if>
+      <if test="taskId != null" >
+        task_id,
+      </if>
+      <if test="actType != null" >
+        act_type,
+      </if>
+      <if test="taskType != null" >
+        task_type,
+      </if>
+      <if test="taskTitle != null" >
+        task_title,
+      </if>
+      <if test="rewardDesc != null" >
+        reward_desc,
+      </if>
+      <if test="imgUrl != null" >
+        img_url,
+      </if>
+      <if test="link != null" >
+        link,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedBy != null" >
+        updated_by,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="busiCode != null" >
+        busi_code,
+      </if>
+      <if test="busiId != null" >
+        busi_id,
+      </if>
+      <if test="completeDate != null" >
+        complete_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="customerTaskId != null" >
+        #{customerTaskId,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null" >
+        #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="actType != null" >
+        #{actType,jdbcType=INTEGER},
+      </if>
+      <if test="taskType != null" >
+        #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="taskTitle != null" >
+        #{taskTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardDesc != null" >
+        #{rewardDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="imgUrl != null" >
+        #{imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="link != null" >
+        #{link,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="busiCode != null" >
+        #{busiCode,jdbcType=INTEGER},
+      </if>
+      <if test="busiId != null" >
+        #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="completeDate != null" >
+        #{completeDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.CustomerTask" >
+    update t_insurance_crm_customer_task
+    <set >
+      <if test="taskId != null" >
+        task_id = #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="actType != null" >
+        act_type = #{actType,jdbcType=INTEGER},
+      </if>
+      <if test="taskType != null" >
+        task_type = #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="taskTitle != null" >
+        task_title = #{taskTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardDesc != null" >
+        reward_desc = #{rewardDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="imgUrl != null" >
+        img_url = #{imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="link != null" >
+        link = #{link,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        updated_by = #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="busiCode != null" >
+        busi_code = #{busiCode,jdbcType=INTEGER},
+      </if>
+      <if test="busiId != null" >
+        busi_id = #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="completeDate != null" >
+        complete_date = #{completeDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{customerTaskId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.CustomerTask" >
+    update t_insurance_crm_customer_task
+    set task_id = #{taskId,jdbcType=INTEGER},
+      act_type = #{actType,jdbcType=INTEGER},
+      task_type = #{taskType,jdbcType=INTEGER},
+      task_title = #{taskTitle,jdbcType=VARCHAR},
+      reward_desc = #{rewardDesc,jdbcType=VARCHAR},
+      img_url = #{imgUrl,jdbcType=VARCHAR},
+      link = #{link,jdbcType=VARCHAR},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      busi_code = #{busiCode,jdbcType=INTEGER},
+      busi_id = #{busiId,jdbcType=VARCHAR},
+      complete_date = #{completeDate,jdbcType=TIMESTAMP}
+    where id = #{customerTaskId,jdbcType=INTEGER}
+  </update>
+</mapper>

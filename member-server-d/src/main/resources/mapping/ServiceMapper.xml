@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.ServiceMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.Service" >
+    <id column="id" property="memberProductRecommentId" jdbcType="INTEGER" />
+    <result column="member_product_recommendation_class" property="memberProductRecommendationClass" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="VARCHAR" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="product_price" property="productPrice" jdbcType="DECIMAL" />
+    <result column="product_discount_price" property="productDiscountPrice" jdbcType="DECIMAL" />
+    <result column="product_recommendation_begin" property="productRecommendationBegin" jdbcType="TIMESTAMP" />
+    <result column="product_recommendation_end" property="productRecommendationEnd" jdbcType="TIMESTAMP" />
+    <result column="rank" property="rank" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="update_at" property="updateAt" jdbcType="TIMESTAMP" />
+    <result column="auditor_id" property="auditorId" jdbcType="INTEGER" />
+    <result column="aud_status" property="audStatus" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_product_recommendation_class, product_id, product_name,
+    product_price, product_discount_price, product_recommendation_begin, product_recommendation_end, 
+    rank, sort, created_by, created_at, update_by, update_at, auditor_id, aud_status, 
+    status
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_insurance_crm_service
+    where id = #{memberProductRecommentId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_insurance_crm_service
+    where id = #{memberProductRecommentId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.bestpay.member.po.Service" >
+    insert into t_insurance_crm_service
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="memberProductRecommentId != null" >
+        id,
+      </if>
+      <if test="memberProductRecommendationClass != null" >
+        member_product_recommendation_class,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="productName != null" >
+        product_name,
+      </if>
+      <if test="productPrice != null" >
+        product_price,
+      </if>
+      <if test="productDiscountPrice != null" >
+        product_discount_price,
+      </if>
+      <if test="productRecommendationBegin != null" >
+        product_recommendation_begin,
+      </if>
+      <if test="productRecommendationEnd != null" >
+        product_recommendation_end,
+      </if>
+      <if test="rank != null" >
+        rank,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateAt != null" >
+        update_at,
+      </if>
+      <if test="auditorId != null" >
+        auditor_id,
+      </if>
+      <if test="audStatus != null" >
+        aud_status,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="memberProductRecommentId != null" >
+        #{memberProductRecommentId,jdbcType=INTEGER},
+      </if>
+      <if test="memberProductRecommendationClass != null" >
+        #{memberProductRecommendationClass,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="productPrice != null" >
+        #{productPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="productDiscountPrice != null" >
+        #{productDiscountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="productRecommendationBegin != null" >
+        #{productRecommendationBegin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productRecommendationEnd != null" >
+        #{productRecommendationEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rank != null" >
+        #{rank,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateAt != null" >
+        #{updateAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditorId != null" >
+        #{auditorId,jdbcType=INTEGER},
+      </if>
+      <if test="audStatus != null" >
+        #{audStatus,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.Service" >
+    update t_insurance_crm_service
+    <set >
+      <if test="memberProductRecommendationClass != null" >
+        member_product_recommendation_class = #{memberProductRecommendationClass,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        product_id = #{productId,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="productPrice != null" >
+        product_price = #{productPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="productDiscountPrice != null" >
+        product_discount_price = #{productDiscountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="productRecommendationBegin != null" >
+        product_recommendation_begin = #{productRecommendationBegin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productRecommendationEnd != null" >
+        product_recommendation_end = #{productRecommendationEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rank != null" >
+        rank = #{rank,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateAt != null" >
+        update_at = #{updateAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditorId != null" >
+        auditor_id = #{auditorId,jdbcType=INTEGER},
+      </if>
+      <if test="audStatus != null" >
+        aud_status = #{audStatus,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{memberProductRecommentId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.MemberRankMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.MemberRank" >
+    <id column="id" property="memberRankId" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="SMALLINT" />
+    <result column="rank_name" property="rankName" jdbcType="VARCHAR" />
+    <result column="growth_value_min" property="growthValueMin" jdbcType="DOUBLE" />
+    <result column="growth_value_max" property="growthValueMax" jdbcType="DOUBLE" />
+    <result column="valid_period" property="validPeriod" jdbcType="VARCHAR" />
+    <result column="value_recover_flag" property="valueRecoverFlag" jdbcType="INTEGER" />
+    <result column="recover_value" property="recoverValue" jdbcType="INTEGER" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="auditor_id" property="auditorId" jdbcType="VARCHAR" />
+    <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="aud_status" property="audStatus" jdbcType="INTEGER" />
+    <result column="member_rank_status" property="memberRankStatus" jdbcType="INTEGER" />
+    <result column="rank_Identification" property="rankIdentification" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="AllResultMap" type="com.bestpay.member.dto.MemberRankDto" >
+    <id column="id" property="memberRankId" jdbcType="INTEGER" />
+    <result column="rank_name" property="rankName" jdbcType="VARCHAR" />
+    <result column="growth_value_min" property="growthValueMin" jdbcType="DOUBLE" />
+    <result column="growth_value_max" property="growthValueMax" jdbcType="DOUBLE" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    id, sort, rank_name, growth_value_min, growth_value_max, valid_period,
+    value_recover_flag, recover_value, created_by, created_at, updated_by, updated_at, 
+    auditor_id, audit_time, aud_status, member_rank_status, rank_Identification, is_valid
+  </sql>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_insurance_crm_member_rank
+    where id = #{memberRankId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultType="com.bestpay.member.dto.MemberRankDto">
+    select
+    tr.id as memberRankId,
+    tr.rank_name as rankName,
+    tr.growth_value_min as growthValueMin,
+    tr.growth_value_max as growthValueMax,
+    trp.rank_prop_name as rankPropName,
+    trp.rank_prop_img as rankPropImg
+    from t_insurance_crm_member_rank tr,t_insurance_crm_member_rank_prop trp
+    where is_valid = 1
+    AND tr.rank_prop_id = trp.id
+    and member_rank_status = 5
+    order BY  growth_value_min ASC
+  </select>
+
+
+  <select id="selectNextGrowthValueByUserGrowthValue" resultType="com.bestpay.member.vo.RankNextNameAndNextValueVo" parameterType="java.lang.Double">
+    select growth_value_min as nextValue,rank_name as nextName
+    from t_insurance_crm_member_rank
+    where is_valid = 1
+    and member_rank_status = 5
+    and growth_value_min &gt; #{growthValue}
+    order by growth_value_min ASC
+    limit 1
+  </select>
+
+  <select id="selectMaxRankMaxValue" resultType="java.lang.Double" parameterType="java.lang.Integer">
+    select growth_value_max from t_insurance_crm_member_rank where id = #{id}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_insurance_crm_member_rank
+    where id = #{memberRankId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bestpay.member.po.MemberRank" >
+    insert into t_insurance_crm_member_rank (id, sort,
+      rank_name, growth_value_min, growth_value_max, 
+      valid_period, value_recover_flag, recover_value, 
+      created_by, created_at, updated_by, 
+      updated_at, auditor_id, audit_time, 
+      aud_status, member_rank_status, rank_Identification, 
+      is_valid)
+    values (#{memberRankId,jdbcType=INTEGER}, #{sort,jdbcType=SMALLINT},
+      #{rankName,jdbcType=VARCHAR}, #{growthValueMin,jdbcType=VARCHAR}, #{growthValueMax,jdbcType=VARCHAR}, 
+      #{validPeriod,jdbcType=VARCHAR}, #{valueRecoverFlag,jdbcType=INTEGER}, #{recoverValue,jdbcType=INTEGER}, 
+      #{createdBy,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, 
+      #{updatedAt,jdbcType=TIMESTAMP}, #{auditorId,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP}, 
+      #{audStatus,jdbcType=INTEGER}, #{memberRankStatus,jdbcType=INTEGER}, #{rankIdentification,jdbcType=INTEGER}, 
+      #{isValid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bestpay.member.po.MemberRank" >
+    insert into t_insurance_crm_member_rank
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="memberRankId != null" >
+        id,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="rankName != null" >
+        rank_name,
+      </if>
+      <if test="growthValueMin != null" >
+        growth_value_min,
+      </if>
+      <if test="growthValueMax != null" >
+        growth_value_max,
+      </if>
+      <if test="validPeriod != null" >
+        valid_period,
+      </if>
+      <if test="valueRecoverFlag != null" >
+        value_recover_flag,
+      </if>
+      <if test="recoverValue != null" >
+        recover_value,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedBy != null" >
+        updated_by,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+      <if test="auditorId != null" >
+        auditor_id,
+      </if>
+      <if test="auditTime != null" >
+        audit_time,
+      </if>
+      <if test="audStatus != null" >
+        aud_status,
+      </if>
+      <if test="memberRankStatus != null" >
+        member_rank_status,
+      </if>
+      <if test="rankIdentification != null" >
+        rank_Identification,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sort != null" >
+        #{sort,jdbcType=SMALLINT},
+      </if>
+      <if test="rankId != null" >
+        #{rankId,jdbcType=SMALLINT},
+      </if>
+      <if test="rankName != null" >
+        #{rankName,jdbcType=VARCHAR},
+      </if>
+      <if test="growthValueMin != null" >
+        #{growthValueMin,jdbcType=VARCHAR},
+      </if>
+      <if test="growthValueMax != null" >
+        #{growthValueMax,jdbcType=VARCHAR},
+      </if>
+      <if test="validPeriod != null" >
+        #{validPeriod,jdbcType=VARCHAR},
+      </if>
+      <if test="valueRecoverFlag != null" >
+        #{valueRecoverFlag,jdbcType=INTEGER},
+      </if>
+      <if test="recoverValue != null" >
+        #{recoverValue,jdbcType=INTEGER},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditorId != null" >
+        #{auditorId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null" >
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="audStatus != null" >
+        #{audStatus,jdbcType=INTEGER},
+      </if>
+      <if test="memberRankStatus != null" >
+        #{memberRankStatus,jdbcType=INTEGER},
+      </if>
+      <if test="rankIdentification != null" >
+        #{rankIdentification,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.MemberRank" >
+    update t_insurance_crm_member_rank
+    <set >
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=SMALLINT},
+      </if>
+      <if test="rankName != null" >
+        rank_name = #{rankName,jdbcType=VARCHAR},
+      </if>
+      <if test="growthValueMin != null" >
+        growth_value_min = #{growthValueMin,jdbcType=VARCHAR},
+      </if>
+      <if test="growthValueMax != null" >
+        growth_value_max = #{growthValueMax,jdbcType=VARCHAR},
+      </if>
+      <if test="validPeriod != null" >
+        valid_period = #{validPeriod,jdbcType=VARCHAR},
+      </if>
+      <if test="valueRecoverFlag != null" >
+        value_recover_flag = #{valueRecoverFlag,jdbcType=INTEGER},
+      </if>
+      <if test="recoverValue != null" >
+        recover_value = #{recoverValue,jdbcType=INTEGER},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        updated_by = #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditorId != null" >
+        auditor_id = #{auditorId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null" >
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="audStatus != null" >
+        aud_status = #{audStatus,jdbcType=INTEGER},
+      </if>
+      <if test="memberRankStatus != null" >
+        member_rank_status = #{memberRankStatus,jdbcType=INTEGER},
+      </if>
+      <if test="rankIdentification != null" >
+        rank_Identification = #{rankIdentification,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{memberRankId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.MemberRank" >
+    update t_insurance_crm_member_rank
+    set sort = #{sort,jdbcType=SMALLINT},
+      rank_name = #{rankName,jdbcType=VARCHAR},
+      growth_value_min = #{growthValueMin,jdbcType=VARCHAR},
+      growth_value_max = #{growthValueMax,jdbcType=VARCHAR},
+      valid_period = #{validPeriod,jdbcType=VARCHAR},
+      value_recover_flag = #{valueRecoverFlag,jdbcType=INTEGER},
+      recover_value = #{recoverValue,jdbcType=INTEGER},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      auditor_id = #{auditorId,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      aud_status = #{audStatus,jdbcType=INTEGER},
+      member_rank_status = #{memberRankStatus,jdbcType=INTEGER},
+      rank_Identification = #{rankIdentification,jdbcType=INTEGER},
+      is_valid = #{isValid,jdbcType=INTEGER}
+    where id = #{memberRankId,jdbcType=INTEGER}
+  </update>
+  <!-- 升级列表 -->
+  <select id="selectUpRank" parameterType="java.util.Map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+     from t_insurance_crm_member_rank r where r.member_rank_status = 5  and r.growth_value_min &lt;=#{minValue1}
+	  and r.growth_value_min &gt;#{minValue2}
+	order by r.growth_value_min asc
+  </select>
+ <!-- 降级列表 -->
+ <select id="selectDownRank" parameterType="java.util.Map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+     from t_insurance_crm_member_rank r where r.member_rank_status = 5  and r.growth_value_min &lt;#{minValue2}
+	order by r.growth_value_min desc limit 0,1
+  </select>
+  
+</mapper>

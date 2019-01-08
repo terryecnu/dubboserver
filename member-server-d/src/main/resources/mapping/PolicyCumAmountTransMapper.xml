@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.PolicyCumAmountTransMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.PolicyCumAmountTrans" >
+    <id column="acct_trans_id" property="acctTransId" jdbcType="INTEGER" />
+    <result column="acct_id" property="acctId" jdbcType="VARCHAR" />
+    <result column="acct_trans_no" property="acctTransNo" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="SMALLINT" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="trans_type" property="transType" jdbcType="SMALLINT" />
+    <result column="trans_status" property="transStatus" jdbcType="VARCHAR" />
+    <result column="trans_time" property="transTime" jdbcType="TIMESTAMP" />
+    <result column="trans_amount" property="transAmount" jdbcType="DECIMAL" />
+    <result column="bp_code" property="bpCode" jdbcType="VARCHAR" />
+    <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
+    <result column="this_acct_amount" property="thisAcctAmount" jdbcType="DECIMAL" />
+    <result column="trans_context" property="transContext" jdbcType="VARCHAR" />
+    <result column="eff_date" property="effDate" jdbcType="TIMESTAMP" />
+    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    acct_trans_id, acct_id, acct_trans_no, user_type, user_id, trans_type, trans_status, 
+    trans_time, trans_amount, bp_code, busi_id, this_acct_amount, trans_context, eff_date, 
+    end_date, created_by, created_at, updated_by, updated_at
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_insurance_crm_policy_cum_amount_trans
+    where acct_trans_id = #{acctTransId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_insurance_crm_policy_cum_amount_trans
+    where acct_trans_id = #{acctTransId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bestpay.member.po.PolicyCumAmountTrans" >
+    insert into t_insurance_crm_policy_cum_amount_trans (acct_trans_id, acct_id, acct_trans_no, 
+      user_type, user_id, trans_type, 
+      trans_status, trans_time, trans_amount, 
+      bp_code, busi_id, this_acct_amount, 
+      trans_context, eff_date, end_date, 
+      created_by, created_at, updated_by, 
+      updated_at)
+    values (#{acctTransId,jdbcType=INTEGER}, #{acctId,jdbcType=VARCHAR}, #{acctTransNo,jdbcType=VARCHAR}, 
+      #{userType,jdbcType=SMALLINT}, #{userId,jdbcType=VARCHAR}, #{transType,jdbcType=SMALLINT}, 
+      #{transStatus,jdbcType=VARCHAR}, #{transTime,jdbcType=TIMESTAMP}, #{transAmount,jdbcType=DECIMAL}, 
+      #{bpCode,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, #{thisAcctAmount,jdbcType=DECIMAL}, 
+      #{transContext,jdbcType=VARCHAR}, #{effDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
+      #{createdBy,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, 
+      #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bestpay.member.po.PolicyCumAmountTrans" >
+    insert into t_insurance_crm_policy_cum_amount_trans
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="acctTransId != null" >
+        acct_trans_id,
+      </if>
+      <if test="acctId != null" >
+        acct_id,
+      </if>
+      <if test="acctTransNo != null" >
+        acct_trans_no,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="transType != null" >
+        trans_type,
+      </if>
+      <if test="transStatus != null" >
+        trans_status,
+      </if>
+      <if test="transTime != null" >
+        trans_time,
+      </if>
+      <if test="transAmount != null" >
+        trans_amount,
+      </if>
+      <if test="bpCode != null" >
+        bp_code,
+      </if>
+      <if test="busiId != null" >
+        busi_id,
+      </if>
+      <if test="thisAcctAmount != null" >
+        this_acct_amount,
+      </if>
+      <if test="transContext != null" >
+        trans_context,
+      </if>
+      <if test="effDate != null" >
+        eff_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedBy != null" >
+        updated_by,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="acctTransId != null" >
+        #{acctTransId,jdbcType=INTEGER},
+      </if>
+      <if test="acctId != null" >
+        #{acctId,jdbcType=VARCHAR},
+      </if>
+      <if test="acctTransNo != null" >
+        #{acctTransNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=SMALLINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="transType != null" >
+        #{transType,jdbcType=SMALLINT},
+      </if>
+      <if test="transStatus != null" >
+        #{transStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="transTime != null" >
+        #{transTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transAmount != null" >
+        #{transAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bpCode != null" >
+        #{bpCode,jdbcType=VARCHAR},
+      </if>
+      <if test="busiId != null" >
+        #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="thisAcctAmount != null" >
+        #{thisAcctAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transContext != null" >
+        #{transContext,jdbcType=VARCHAR},
+      </if>
+      <if test="effDate != null" >
+        #{effDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.PolicyCumAmountTrans" >
+    update t_insurance_crm_policy_cum_amount_trans
+    <set >
+      <if test="acctId != null" >
+        acct_id = #{acctId,jdbcType=VARCHAR},
+      </if>
+      <if test="acctTransNo != null" >
+        acct_trans_no = #{acctTransNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=SMALLINT},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="transType != null" >
+        trans_type = #{transType,jdbcType=SMALLINT},
+      </if>
+      <if test="transStatus != null" >
+        trans_status = #{transStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="transTime != null" >
+        trans_time = #{transTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transAmount != null" >
+        trans_amount = #{transAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bpCode != null" >
+        bp_code = #{bpCode,jdbcType=VARCHAR},
+      </if>
+      <if test="busiId != null" >
+        busi_id = #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="thisAcctAmount != null" >
+        this_acct_amount = #{thisAcctAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transContext != null" >
+        trans_context = #{transContext,jdbcType=VARCHAR},
+      </if>
+      <if test="effDate != null" >
+        eff_date = #{effDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        updated_by = #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where acct_trans_id = #{acctTransId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.PolicyCumAmountTrans" >
+    update t_insurance_crm_policy_cum_amount_trans
+    set acct_id = #{acctId,jdbcType=VARCHAR},
+      acct_trans_no = #{acctTransNo,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=SMALLINT},
+      user_id = #{userId,jdbcType=VARCHAR},
+      trans_type = #{transType,jdbcType=SMALLINT},
+      trans_status = #{transStatus,jdbcType=VARCHAR},
+      trans_time = #{transTime,jdbcType=TIMESTAMP},
+      trans_amount = #{transAmount,jdbcType=DECIMAL},
+      bp_code = #{bpCode,jdbcType=VARCHAR},
+      busi_id = #{busiId,jdbcType=VARCHAR},
+      this_acct_amount = #{thisAcctAmount,jdbcType=DECIMAL},
+      trans_context = #{transContext,jdbcType=VARCHAR},
+      eff_date = #{effDate,jdbcType=TIMESTAMP},
+      end_date = #{endDate,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where acct_trans_id = #{acctTransId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="querySumPolicyAmount" parameterType="java.lang.String" resultType="java.lang.Double">
+ 	 SELECT sum(trans_amount) FROM t_insurance_crm_policy_cum_amount_trans where user_id = #{userId}
+  </select>
+  
+
+  
+</mapper>

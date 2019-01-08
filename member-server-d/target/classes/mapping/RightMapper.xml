@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bestpay.member.mapper.RightMapper" >
+  <resultMap id="BaseResultMap" type="com.bestpay.member.po.Right" >
+    <id column="id" property="insuranceCrmRightId" jdbcType="INTEGER" />
+    <result column="right_options" property="rightOptions" jdbcType="INTEGER" />
+    <result column="right_des" property="rightDes" jdbcType="VARCHAR" />
+    <result column="sort_order" property="sortOrder" jdbcType="INTEGER" />
+    <result column="right_icon_img" property="rightIconImg" jdbcType="VARCHAR" />
+    <result column="rank_id" property="rankId" jdbcType="INTEGER" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="link_word" property="linkWord" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="auditor_id" property="auditorId" jdbcType="VARCHAR" />
+    <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="aud_status" property="audStatus" jdbcType="SMALLINT" />
+    <result column="aud_status_des" property="audStatusDes" jdbcType="VARCHAR" />
+    <result column="right_status" property="rightStatus" jdbcType="SMALLINT" />
+    <result column="auditor_refused" property="auditorRefused" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="AllRightsInfo" type="com.bestpay.member.dto.RightInfoDto">
+    <result column="right_des" property="rightDes" jdbcType="VARCHAR" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="link_word" property="linkWord" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bestpay.member.po.Right" extends="BaseResultMap" >
+    <result column="right_detail" property="rightDetail" jdbcType="LONGVARBINARY" />
+  </resultMap>
+  <resultMap id="AllRightsInfoWithBLOBs" type="com.bestpay.member.dto.RightInfoDto" extends="AllRightsInfo" >
+    <result column="right_detail" property="rightDetail" jdbcType="LONGVARBINARY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, right_options, right_des, sort_order, rank_id, link_url,
+    link_word, created_by, created_at, updated_by, updated_at, auditor_id, audit_time, 
+    aud_status, aud_status_des, right_status, auditor_refused, is_valid
+  </sql>
+  <sql id="Blob_Column_List" >
+    right_detail
+  </sql>
+  <sql id="AllRightsList">
+    id,right_options
+  </sql>
+  <sql id="AllRightsInfo">
+    right_des,link_url,link_word
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_insurance_crm_right
+    where id = #{insuranceCrmRightId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByRightId" resultType="com.bestpay.member.dto.RightInfoDto" parameterType="java.lang.Integer">
+    select
+    tr.id as insuranceCrmRightId,
+    tt.t_insurance_crm_right_options_name as rightName
+    from t_insurance_crm_right tr, t_insurance_crm_right_option_type tt
+    WHERE tr.is_valid = 1
+    and tr.right_status = 5
+    AND tr.right_options = tt.id
+    AND tr.id = #{rightId}
+  </select>
+  
+  <!--查询等级权益项 -->
+  <select id="selectByRankId" resultType="com.bestpay.member.po.Right" parameterType="java.lang.Integer">
+    select tr.id as insuranceCrmRightId,
+
+	tr.enable_status enableStatus
+
+    FROM t_insurance_crm_member_rank_content trc,
+    t_insurance_crm_right tr
+    where 
+     trc.busi_code = 1
+    and trc.member_rank_id =#{rankId}
+    AND trc.busi_id = tr.id
+    /*AND tr.is_valid = 1
+    AND tr.right_status = 5*/
+    and tr.enable_status =1
+  </select>
+  
+
+  <select id="selectAll" resultType="com.bestpay.member.dto.RightDto">
+    select
+    tr.id as insuranceCrmRightId,
+    trt.t_insurance_crm_right_options_name as rightOptionsName,
+    trt.light_img as rightIconImg,
+    trt.dark_img as rightIconDarkImg
+    from t_insurance_crm_right tr,t_insurance_crm_right_option_type trt
+    WHERE tr.is_valid = 1
+    and tr.right_status = 5
+    and tr.right_options = trt.id
+  </select>
+
+  <select id="selectAllDarkImgRights" resultType="com.bestpay.member.dto.RightDto">
+    select
+    tr.id as insuranceCrmRightId,
+    trt.t_insurance_crm_right_options_name as rightOptionsName,
+    trt.dark_img as rightIconDarkImg
+    from t_insurance_crm_right tr,t_insurance_crm_right_option_type trt
+    WHERE tr.is_valid = 1
+    and tr.right_status = 5
+    and tr.right_options = trt.id
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_insurance_crm_right
+    where id = #{insuranceCrmRightId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bestpay.member.po.Right" >
+    insert into t_insurance_crm_right (id, right_options,
+      right_des, sort_order, rank_id, 
+      link_url, link_word, created_by, 
+      created_at, updated_by, updated_at, 
+      auditor_id, audit_time, aud_status, 
+      aud_status_des, right_status, auditor_refused, 
+      is_valid, right_detail)
+    values (#{insuranceCrmRightId,jdbcType=INTEGER}, #{rightOptions,jdbcType=INTEGER}, 
+      #{rightDes,jdbcType=VARCHAR}, #{sortOrder,jdbcType=INTEGER}, #{rankId,jdbcType=INTEGER}, 
+      #{linkUrl,jdbcType=VARCHAR}, #{linkWord,jdbcType=VARCHAR}, #{createdBy,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR}, #{updatedAt,jdbcType=TIMESTAMP}, 
+      #{auditorId,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP}, #{audStatus,jdbcType=SMALLINT}, 
+      #{audStatusDes,jdbcType=VARCHAR}, #{rightStatus,jdbcType=SMALLINT}, #{auditorRefused,jdbcType=VARCHAR}, 
+      #{isValid,jdbcType=INTEGER}, #{rightDetail,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bestpay.member.po.Right" >
+    insert into t_insurance_crm_right
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="insuranceCrmRightId != null" >
+        id,
+      </if>
+      <if test="rightOptions != null" >
+        right_options,
+      </if>
+      <if test="rightDes != null" >
+        right_des,
+      </if>
+      <if test="sortOrder != null" >
+        sort_order,
+      </if>
+      <if test="rankId != null" >
+        rank_id,
+      </if>
+      <if test="linkUrl != null" >
+        link_url,
+      </if>
+      <if test="linkWord != null" >
+        link_word,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedBy != null" >
+        updated_by,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+      <if test="auditorId != null" >
+        auditor_id,
+      </if>
+      <if test="auditTime != null" >
+        audit_time,
+      </if>
+      <if test="audStatus != null" >
+        aud_status,
+      </if>
+      <if test="audStatusDes != null" >
+        aud_status_des,
+      </if>
+      <if test="rightStatus != null" >
+        right_status,
+      </if>
+      <if test="auditorRefused != null" >
+        auditor_refused,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="rightDetail != null" >
+        right_detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="insuranceCrmRightId != null" >
+        #{insuranceCrmRightId,jdbcType=INTEGER},
+      </if>
+      <if test="rightOptions != null" >
+        #{rightOptions,jdbcType=INTEGER},
+      </if>
+      <if test="rightDes != null" >
+        #{rightDes,jdbcType=VARCHAR},
+      </if>
+      <if test="sortOrder != null" >
+        #{sortOrder,jdbcType=INTEGER},
+      </if>
+      <if test="rankId != null" >
+        #{rankId,jdbcType=INTEGER},
+      </if>
+      <if test="linkUrl != null" >
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="linkWord != null" >
+        #{linkWord,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditorId != null" >
+        #{auditorId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null" >
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="audStatus != null" >
+        #{audStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="audStatusDes != null" >
+        #{audStatusDes,jdbcType=VARCHAR},
+      </if>
+      <if test="rightStatus != null" >
+        #{rightStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="auditorRefused != null" >
+        #{auditorRefused,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=INTEGER},
+      </if>
+      <if test="rightDetail != null" >
+        #{rightDetail,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bestpay.member.po.Right" >
+    update t_insurance_crm_right
+    <set >
+      <if test="rightOptions != null" >
+        right_options = #{rightOptions,jdbcType=INTEGER},
+      </if>
+      <if test="rightDes != null" >
+        right_des = #{rightDes,jdbcType=VARCHAR},
+      </if>
+      <if test="sortOrder != null" >
+        sort_order = #{sortOrder,jdbcType=INTEGER},
+      </if>
+      <if test="rankId != null" >
+        rank_id = #{rankId,jdbcType=INTEGER},
+      </if>
+      <if test="linkUrl != null" >
+        link_url = #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="linkWord != null" >
+        link_word = #{linkWord,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null" >
+        updated_by = #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditorId != null" >
+        auditor_id = #{auditorId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null" >
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="audStatus != null" >
+        aud_status = #{audStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="audStatusDes != null" >
+        aud_status_des = #{audStatusDes,jdbcType=VARCHAR},
+      </if>
+      <if test="rightStatus != null" >
+        right_status = #{rightStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="auditorRefused != null" >
+        auditor_refused = #{auditorRefused,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=INTEGER},
+      </if>
+      <if test="rightDetail != null" >
+        right_detail = #{rightDetail,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{insuranceCrmRightId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bestpay.member.po.Right" >
+    update t_insurance_crm_right
+    set right_options = #{rightOptions,jdbcType=INTEGER},
+      right_des = #{rightDes,jdbcType=VARCHAR},
+      sort_order = #{sortOrder,jdbcType=INTEGER},
+      rank_id = #{rankId,jdbcType=INTEGER},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
+      link_word = #{linkWord,jdbcType=VARCHAR},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      auditor_id = #{auditorId,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      aud_status = #{audStatus,jdbcType=SMALLINT},
+      aud_status_des = #{audStatusDes,jdbcType=VARCHAR},
+      right_status = #{rightStatus,jdbcType=SMALLINT},
+      auditor_refused = #{auditorRefused,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=INTEGER},
+      right_detail = #{rightDetail,jdbcType=LONGVARBINARY}
+    where id = #{insuranceCrmRightId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bestpay.member.po.Right" >
+    update t_insurance_crm_right
+    set right_options = #{rightOptions,jdbcType=INTEGER},
+      right_des = #{rightDes,jdbcType=VARCHAR},
+      sort_order = #{sortOrder,jdbcType=INTEGER},
+      rank_id = #{rankId,jdbcType=INTEGER},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
+      link_word = #{linkWord,jdbcType=VARCHAR},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      auditor_id = #{auditorId,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      aud_status = #{audStatus,jdbcType=SMALLINT},
+      aud_status_des = #{audStatusDes,jdbcType=VARCHAR},
+      right_status = #{rightStatus,jdbcType=SMALLINT},
+      auditor_refused = #{auditorRefused,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=INTEGER}
+    where id = #{insuranceCrmRightId,jdbcType=INTEGER}
+  </update>
+</mapper>
